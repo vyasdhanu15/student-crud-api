@@ -1,4 +1,4 @@
-name: Student CRUD CI
+name: Student CRUD CI/CD
 
 on:
   push:
@@ -9,8 +9,7 @@ on:
       - main
 
 jobs:
-  ci:
-    name: Build and Validate
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,3 +29,10 @@ jobs:
       - name: Validate Python files
         run: |
           python -m compileall .
+
+      - name: Deploy to Render
+        if: github.ref == 'refs/heads/main'
+        env:
+          deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          curl "$deploy_url"
